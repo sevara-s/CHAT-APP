@@ -1,86 +1,153 @@
+import { useState } from "react";
+import AuthImagePattern from "../../components/auth-image-pattern";
+import {
+  Mail,
+  MessageSquare,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  User,
+} from "lucide-react";
+import type { FormDataType } from "../../@types";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "../../store/useAuthStore";
 
-const  SignUp = () => {
+const SignUp = () => {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormDataType>({
+    email: "",
+    password: "",
+    fullName: "",
+  });
+  const { signup, isRegisterLoading } = useAuthStore();
+  const LoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await signup(formData);
+    console.log(formData);
+  };
+
   return (
-    // Exact background color from your screenshot (#f9fafb)
-    <div className="min-h-screen bg-[#f9fafb] flex items-center justify-center p-4 font-sans">
-      
-      {/* Main container with NO extra white background */}
-      <div className="flex w-full max-w-[880px]">
-        
-        {/* Left Form Section (white card) */}
-        <div className="w-full md:w-[440px] p-8 bg-white rounded-l-lg">
-          <div className="text-center mb-7">
-            <h1 className="text-[22px] font-bold text-gray-900 mb-[6px]">Create Account</h1>
-            <p className="text-gray-600 text-[14px]">Get started with your free account</p>
-          </div>
-
-          <form className="space-y-4">
-            <div className="form-control">
-              <label className="label p-0 mb-1">
-                <span className="label-text text-xs font-medium">Full Name</span>
-              </label>
-              <input
-                type="text"
-                defaultValue="John Doa"
-                className="input input-bordered w-full h-[38px] px-3 text-sm rounded-[5px]"
-              />
+    <div className="h-screen grid lg:grid-cols-2">
+      <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center mb-8">
+            <div className="flex flex-col items-center gap-2 group">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <MessageSquare className="w-6 h-6 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold mt-2">Welcome back</h1>
+              <p className="text-base-content/60">Sign in to your account</p>
             </div>
-
-            <div className="form-control">
-              <label className="label p-0 mb-1">
-                <span className="label-text text-xs font-medium">Email</span>
-              </label>
-              <input
-                type="email"
-                defaultValue="you@example.com"
-                className="input input-bordered w-full h-[38px] px-3 text-sm rounded-[5px]"
-              />
-            </div>
-
-            <div className="form-control">
-              <label className="label p-0 mb-1">
-                <span className="label-text text-xs font-medium">Password</span>
-              </label>
-              <input
-                type="password"
-                defaultValue="password"
-                className="input input-bordered w-full h-[38px] px-3 text-sm rounded-[5px]"
-              />
-            </div>
-
-            <button className="btn btn-primary w-full h-[38px] min-h-[38px] text-sm mt-1">
-              Create Account
-            </button>
-          </form>
-
-          <div className="mt-8 text-center">
-            <p className="text-gray-600 text-[14px] mb-3 leading-[1.4]">
-              Join our community<br />
-              Connect with friends, share moments, and stay in touch with<br />
-              your loved ones.
-            </p>
-            <p className="text-gray-500 text-[13px]">
-              Already have an account?{' '}
-              <a href="#" className="text-blue-600 font-medium">Sign In</a>
-            </p>
           </div>
         </div>
 
-        {/* Right Side - EXACT 3x3 Grid */}
-        <div className="hidden md:flex flex-1 bg-[#f9fafb] items-center justify-center">
-          <div className="grid grid-cols-3 gap-4 w-[80%] h-[80%] opacity-20">
-            {[...Array(9)].map((_, i) => (
-              <div 
-                key={i} 
-                className="bg-gray-300 rounded-sm"
-                style={{ aspectRatio: '1/1' }}
+        <form onSubmit={LoginSubmit} className="w-[70%] mx-auto">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Full Name</span>
+            </label>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-base-content/40" />
+              </div>
+              <input
+                value={formData.fullName}
+                onChange={(e) =>
+                  setFormData({ ...formData, fullName: e.target.value })
+                }
+                type="text"
+                className="input input-bordered w-full pl-10"
+                placeholder="John Doe"
               />
-            ))}
+            </div>
           </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Email</span>
+            </label>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-base-content/40" />
+              </div>
+              <input
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                type="email"
+                className="input input-bordered w-full pl-10"
+                placeholder="your@email.com"
+              />
+            </div>
+          </div>
+
+          <div className="form-control mt-4">
+            <label className="label">
+              <span className="label-text font-medium">Password</span>
+            </label>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-base-content/40" />
+              </div>
+              <input
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                value={formData.password}
+                type={showPassword ? "text" : "password"}
+                className="input input-bordered w-full pl-10"
+                placeholder="********"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-base-content/40" />
+                ) : (
+                  <Eye className="h-5 w-5 text-base-content/40" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <button
+            disabled={isRegisterLoading}
+            type="submit"
+            className="btn btn-primary w-full mt-5"
+          >
+            {isRegisterLoading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              <span>Sign up</span>
+            )}
+          </button>
+        </form>
+        <div className="text-center mt-5">
+          <p className="text-base-content/60">
+          Already have an account{" "}
+            <Link to="/sign-in" className="link link-primary">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
+
+      <AuthImagePattern
+        title="Welcome back"
+        subtitle="Sign in to continue your conversation and catch up with your messages"
+      />
     </div>
   );
 };
 
-export default  SignUp;
+export default SignUp;

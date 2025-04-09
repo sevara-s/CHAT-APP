@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AuthImagePattern from "../../components/auth-image-pattern";
-import { Mail, MessageSquare, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, MessageSquare, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import type { FormDataType } from "../../@types";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -11,12 +11,11 @@ const SignIn = () => {
     email: "",
     password: "",
   });
- const {signin,isLoginLoading} = useAuthStore()
-  const LoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const { signin, isLoginLoading } = useAuthStore();
+  const LoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await signin(formData)
+    await signin(formData);
     console.log(formData);
-    
   };
 
   return (
@@ -88,8 +87,19 @@ const SignIn = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary w-full mt-5">
-            Login
+          <button
+            disabled={isLoginLoading}
+            type="submit"
+            className="btn btn-primary w-full mt-5"
+          >
+            {isLoginLoading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              <span>Sign in</span>
+            )}
           </button>
         </form>
         <div className="text-center mt-5">
