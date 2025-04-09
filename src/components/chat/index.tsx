@@ -19,14 +19,15 @@ const ChatContainer = () => {
   const messageEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (selectedUser && selectedUser._id) {
-      getMessages(selectedUser._id);
-    }
-
+    if (!selectedUser || !selectedUser._id) return ;
+    getMessages(selectedUser._id);
     subscribeToMessages();
-
-    return () => unsubscribeFromMessages();
-  }, [selectedUser, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  
+    return () => {
+      unsubscribeFromMessages();
+    };
+  }, [selectedUser?._id]);
+  
 
   useEffect(() => {
     if (messageEndRef.current && messages) {
@@ -64,8 +65,8 @@ const ChatContainer = () => {
                 <img
                   src={
                     authUser && message.senderId === authUser._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser?.profilePic || "/avatar.png"
+                      ? authUser.profilePic || "/avatar.jpeg"
+                      : selectedUser?.profilePic || "/avatar.jpeg"
                   }
                   alt="profile pic"
                 />

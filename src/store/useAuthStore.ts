@@ -5,7 +5,6 @@ import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { io, Socket } from "socket.io-client";
 
-const BASE_URL = "https://chat-app-bb-tai4.onrender.com";
 
 interface UseAuthType {
   authUser: AuthUserType | null;
@@ -33,23 +32,21 @@ export const useAuthStore = create<UseAuthType>((set, get) => ({
   onlineUsers: [],
   socket: null,
 
-  connectSocket: () => {
-    const { authUser } = get();
-    if (!authUser || get().socket?.connected) return;
-
-    const socket = io(BASE_URL, {
-      query: {
-        userId: authUser._id,
-      },
+  connectSocket() {
+    const { authUser, socket } = get();
+    if (!authUser || socket?.connected) return;
+    const socketIo = io("https://chat-app-bb-tai4.onrender.com", {
+      query: { userId: authUser?._id },
+      withCredentials: true,
     });
-    socket.connect();
-
-    set({ socket: socket });
-
-    socket.on("getOnlineUsers", (userIds: string[]) => {
-      set({ onlineUsers: userIds });
+    socketIo.connect();
+    set({ socket: socketIo });
+    socketIo.on("getOnlineUsers", (userId: string[]) => {
+      set({ onlineUsers: userId });
     });
   },
+
+  
 
   disconnectSocket: () => {
     const socket = get().socket;
@@ -61,6 +58,7 @@ export const useAuthStore = create<UseAuthType>((set, get) => ({
     try {
       const res = await axiosInstance.get("/auth/check");
       set({ authUser: res.data.data });
+      get().connectSocket()
     } catch (error) {
       if (error instanceof AxiosError) {
         if (
